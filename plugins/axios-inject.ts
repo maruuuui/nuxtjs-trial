@@ -6,14 +6,21 @@ const myInjectedFunction = async (
   errorCallback: (params: NuxtError) => void
 ) => {
   console.log("url:", url);
-  const res = await axios.get(url).catch(err => {
+  let res
+  try {
+    res = await axios.get(url)
+  } catch (err) {
     console.log(err);
     if (!err.response) {
-      //no response => network error
-      return "network error";
+      //no response => レスポンスすら受け取れない場合。ステータスコードは定義されていない
+      errorCallback({ statusCode: undefined, message: "network error" })
+      return;
     }
-    return err.response;
-  });
+    // 各レスポンスに対応する処理があれば追加
+    errorCallback({ statusCode: err.response.status, message: "server error" });
+    return;
+  }
+
   console.log(res);
 
   if (res.status !== 200) {
@@ -23,6 +30,6 @@ const myInjectedFunction = async (
   }
 };
 
-export default ({}, inject: any) => {
+export default ({ }, inject: any) => {
   inject("myInjectedFunction", myInjectedFunction);
 };

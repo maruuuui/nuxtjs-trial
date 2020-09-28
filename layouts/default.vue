@@ -3,8 +3,8 @@
     <div>Title Bar</div>
     <NLink to="/">Top Page</NLink>
     <!-- <NLink to="/about">About Page</NLink> -->
-    <NLink to="/images">Images Page</NLink>
-    <Nuxt />
+    <NLink :to="{ path: '/images/?page=1' }">Images Page</NLink>
+    <Nuxt :nuxt-child-key="$route.fullPath" />
   </div>
 </template>
 

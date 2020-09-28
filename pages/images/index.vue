@@ -1,9 +1,9 @@
 <template>
   <div>
-    <h1>Images images</h1>
+    <h1>Images</h1>
     {{ totalRecords }}件
-    <button @click="refresh(nextPageNumber)">{{ nextPageNumber }}</button>
-    <!-- <n-link :to="`/images/?page=${nextPageNumber}`">次</n-link> -->
+    <!-- <button @click="refresh(nextPageNumber)">{{ nextPageNumber }}</button> -->
+    <n-link :to="{ path: `/images/?page=${nextPageNumber}` }">次</n-link>
 
     <v-simple-table>
       <thead>
@@ -18,12 +18,14 @@
             <v-img
               :src="imageData.image"
               contain
-              :max-width="0.2*window_width"
-              :max-height="0.2*window_height"
+              :max-width="0.2 * window_width"
+              :max-height="0.2 * window_height"
             />
           </td>
           <td>
-            <n-link :to="`/images/${imageData.id}`">{{ imageData.image_name }}</n-link>
+            <n-link :to="`/images/${imageData.id}`">{{
+              imageData.image_name
+            }}</n-link>
           </td>
         </tr>
       </tbody>
@@ -35,13 +37,18 @@
 const baseUrl = "http://localhost:8000/api/v1/image/";
 
 export default {
-  async asyncData({ error, app }) {
+  watchQuery: ["page"], // 表示ページ数クエリパラメータの監視
+  async asyncData({ error, app, route }) {
+    const nowPage = route.query.page ? route.query.page : 1;
+    console.log(nowPage);
     // appの中の$axiosを使用
-    app.$myInjectedFunction("test");
-    const res = await app.$axios.get(`${baseUrl}?page=1`).catch((err) => {
-      console.log(err);
-      return err.response;
-    });
+    // app.$myInjectedFunction("test");
+    const res = await app.$axios
+      .get(`${baseUrl}?page=${nowPage}`)
+      .catch((err) => {
+        console.log(err);
+        return err.response;
+      });
     console.log(res);
 
     if (res.status !== 200) {
@@ -55,7 +62,8 @@ export default {
     const totalRecords = res.data.count;
     const nextPageUrl = res.data.next;
     console.log(nextPageUrl);
-    const pageQueryStringIndex = nextPageUrl.indexOf("?page=");
+    const pageQueryStringIndex =
+      nextPageUrl !== null ? nextPageUrl.indexOf("?page=") : -1;
     const nextPageNumber =
       pageQueryStringIndex === -1
         ? undefined
