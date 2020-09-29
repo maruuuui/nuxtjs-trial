@@ -30,36 +30,32 @@
     </v-simple-table>
     <div class="align-center">
       <!-- 前ページへのリンクボタン ここから -->
-      <p
+      <v-btn
         :to="{ path: `/images/?page=${prevPageNumber}` }"
-        class="button--disabled"
         v-if="prevPageNumber === undefined"
+        disabled
+        nuxt
       >
         &lt;
-      </p>
-      <n-link
-        :to="{ path: `/images/?page=${prevPageNumber}` }"
-        class="button--green"
-        v-else
-        >&lt;</n-link
+      </v-btn>
+      <v-btn :to="{ path: `/images/?page=${prevPageNumber}` }" v-else nuxt
+        >&lt;</v-btn
       >
       <!-- 前ページへのリンクボタン ここまで -->
 
       {{ nowPageNumber }}ページ目
 
       <!-- 次ページへのリンクボタン ここから -->
-      <p
+      <v-btn
         :to="{ path: `/images/?page=${nextPageNumber}` }"
-        class="button--disabled"
         v-if="nextPageNumber === undefined"
+        disabled
+        nuxt
       >
         &gt;
-      </p>
-      <n-link
-        :to="{ path: `/images/?page=${nextPageNumber}` }"
-        class="button--green"
-        v-else
-        >&gt;</n-link
+      </v-btn>
+      <v-btn :to="{ path: `/images/?page=${nextPageNumber}` }" v-else nuxt
+        >&gt;</v-btn
       >
       <!-- 次ページへのリンクボタン ここまで -->
     </div>
