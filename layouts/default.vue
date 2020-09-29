@@ -1,8 +1,11 @@
 <template>
   <div>
-    <div>Title Bar</div>
-    <n-link to="/">Top Page</n-link>
-    <n-link :to="{ path: '/images/?page=1' }">Images Page</n-link>
+    <v-toolbar id="header">
+      <v-toolbar-title>Nuxt.js Trial</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-btn to="/" nuxt>Top Page</v-btn>
+      <v-btn :to="{ path: '/images/?page=1' }" nuxt>Images Page</v-btn>
+    </v-toolbar>
     <nuxt :nuxt-child-key="$route.fullPath" />
   </div>
 </template>
