@@ -33,7 +33,7 @@ declare module "vuex/types/index" {
 type AxiosErrorStatus = {
   status: number;
   message: string;
-  errorResponse: AxiosResponse<any>;
+  errorResponse: AxiosResponse<any> | null;
 };
 
 // 期待するAPIからのレスポンス形式
