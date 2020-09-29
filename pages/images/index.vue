@@ -6,23 +6,23 @@
     <v-simple-table>
       <thead>
         <tr>
-          <th class="text-left">img</th>
-          <th class="text-left">file name</th>
+          <th class="text-left">画像</th>
+          <th class="text-left">ファイル名</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="imageData of images" :key="imageData.id">
+        <tr v-for="imageRecord of imageRecords" :key="imageRecord.id">
           <td>
             <v-img
-              :src="imageData.image"
+              :src="imageRecord.image"
               contain
               :max-width="0.2 * window_width"
               :max-height="0.2 * window_height"
             />
           </td>
           <td>
-            <n-link :to="`/images/${imageData.id}`">{{
-              imageData.image_name
+            <n-link :to="`/images/${imageRecord.id}`">{{
+              imageRecord.image_name
             }}</n-link>
           </td>
         </tr>
@@ -63,6 +63,7 @@
 </template>
 
 <script>
+// TODO:baseURLをどこかで設定してそれを読み込むよう変更
 const baseUrl = "http://localhost:8000/api/v1/image/";
 
 export default {
@@ -88,12 +89,13 @@ export default {
     } else {
       const totalRecords = res.data.count; // 総レコード数
       const nextPageUrl = res.data.next; // 次のページのレコードを取得するためのURL
+      const imageRecords = res.data.results; // 現在ページのレコード
       console.log(nextPageUrl);
       // 次のレコード取得用URLがAPIから取得できたらページ数
       if (nextPageUrl === null) {
         // 次のレコード取得用URLがnull => 現在位置が最終ページ
         return {
-          images: res.data.results,
+          imageRecords,
           totalRecords,
           prevPageNumber,
           nowPageNumber,
@@ -103,7 +105,7 @@ export default {
       const pageQueryStringIndex = nextPageUrl.indexOf("?page=");
       const nextPageNumber = nextPageUrl.slice(pageQueryStringIndex + 6);
       return {
-        images: res.data.results,
+        imageRecords,
         totalRecords,
         prevPageNumber,
         nowPageNumber,

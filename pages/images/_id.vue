@@ -2,14 +2,14 @@
   <div>
     <h1>Images posts</h1>
     <v-card>
-      <v-img :src="imageData.image" contain height="200px"></v-img>
+      <v-img :src="imageRecord.image" contain height="200px"></v-img>
 
       <v-list two-line>
         <v-list-item key="image_name">
           <v-list-item-content>
             <v-list-item-title>image_name</v-list-item-title>
             <v-list-item-subtitle class="wrap-text">
-              {{ imageData.image_name }}
+              {{ imageRecord.image_name }}
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
@@ -19,7 +19,7 @@
           <v-list-item-content>
             <v-list-item-title>memo</v-list-item-title>
             <v-list-item-subtitle class="wrap-text">
-              {{ imageData.memo }}
+              {{ imageRecord.memo }}
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
@@ -29,7 +29,7 @@
           <v-list-item-content>
             <v-list-item-title>created_at</v-list-item-title>
             <v-list-item-subtitle class="wrap-text">
-              {{ imageData.created_at }}
+              {{ imageRecord.created_at }}
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
@@ -39,14 +39,14 @@
           <v-list-item-content>
             <v-list-item-title>updated_at</v-list-item-title>
             <v-list-item-subtitle class="wrap-text">
-              {{ imageData.updated_at }}
+              {{ imageRecord.updated_at }}
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
         <v-divider :key="`updated_at_divider`"></v-divider>
       </v-list>
     </v-card>
-    <v-btn v-on:click="modoru">戻る</v-btn>
+    <v-btn v-on:click="handleBackButtonClick">戻る</v-btn>
   </div>
 </template>
 
@@ -73,7 +73,7 @@ export default {
     } else {
       const imageRecord = res.data;
       console.log(imageRecord);
-      return { imageData: imageRecord };
+      return { imageRecord };
     }
   },
 
@@ -81,7 +81,7 @@ export default {
     title: "Image Detail page",
   },
   methods: {
-    modoru() {
+    handleBackButtonClick() {
       this.$router.go(-1);
     },
   },
