@@ -1,10 +1,9 @@
 <template>
   <div>
     <div>Title Bar</div>
-    <NLink to="/">Top Page</NLink>
-    <!-- <NLink to="/about">About Page</NLink> -->
-    <NLink :to="{ path: '/images/?page=1' }">Images Page</NLink>
-    <Nuxt :nuxt-child-key="$route.fullPath" />
+    <n-link to="/">Top Page</n-link>
+    <n-link :to="{ path: '/images/?page=1' }">Images Page</n-link>
+    <nuxt :nuxt-child-key="$route.fullPath" />
   </div>
 </template>
 

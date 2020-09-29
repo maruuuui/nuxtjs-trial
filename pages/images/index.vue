@@ -2,7 +2,6 @@
   <div>
     <h1>Images</h1>
     {{ totalRecords }}件
-    <!-- <button @click="refresh(nextPageNumber)">{{ nextPageNumber }}</button> -->
     <n-link :to="{ path: `/images/?page=${nextPageNumber}` }">次</n-link>
 
     <v-simple-table>
@@ -37,42 +36,45 @@
 const baseUrl = "http://localhost:8000/api/v1/image/";
 
 export default {
-  watchQuery: ["page"], // 表示ページ数クエリパラメータの監視
+  // クエリパラメータの監視設定
+  // パスが変わらずクエリパラメータだけが変わった際にも再描画を行わせる
+  watchQuery: ["page"],
+  //描画処理
   async asyncData({ error, app, route }) {
+    // ?page=XX のXXの値を取得
     const nowPage = route.query.page ? route.query.page : 1;
-    console.log(nowPage);
-    // appの中の$axiosを使用
-    // app.$myInjectedFunction("test");
-    const res = await app.$axios
-      .get(`${baseUrl}?page=${nowPage}`)
-      .catch((err) => {
-        console.log(err);
-        return err.response;
-      });
-    console.log(res);
+    // console.log(nowPage);
+    const url = `${baseUrl}?page=${nowPage}`;
+    const res = await app.$getImageRecords(url);
 
-    if (res.status !== 200) {
-      const statusCode = "status" in res ? res.status : 500;
-
-      error({ statusCode: statusCode });
-
+    if (!("data" in res)) {
+      // エラーページの表示;
+      console.log(res);
+      const statusCode = res.status;
+      const message = "message" in res ? res.message : "";
+      error({ statusCode, message });
       return;
+    } else {
+      const totalRecords = res.data.count; // 総レコード数
+      const nextPageUrl = res.data.next; // 次のページのレコードを取得するためのURL
+      console.log(nextPageUrl);
+      // 次のレコード取得用URLがAPIから取得できたらページ数
+      if (nextPageUrl === null) {
+        // 次のレコード取得用URLがnull => 現在位置が最終ページ
+        return {
+          images: res.data.results,
+          totalRecords,
+          nextPageNumber: undefined,
+        };
+      }
+      const pageQueryStringIndex = nextPageUrl.indexOf("?page=");
+      const nextPageNumber = nextPageUrl.slice(pageQueryStringIndex + 6);
+      return {
+        images: res.data.results,
+        totalRecords,
+        nextPageNumber,
+      };
     }
-
-    const totalRecords = res.data.count;
-    const nextPageUrl = res.data.next;
-    console.log(nextPageUrl);
-    const pageQueryStringIndex =
-      nextPageUrl !== null ? nextPageUrl.indexOf("?page=") : -1;
-    const nextPageNumber =
-      pageQueryStringIndex === -1
-        ? undefined
-        : nextPageUrl.slice(pageQueryStringIndex + 6);
-    return {
-      images: res.data.results,
-      totalRecords,
-      nextPageNumber,
-    };
   },
   computed: {
     window_width() {
@@ -85,16 +87,6 @@ export default {
 
   head: {
     title: "Images page",
-  },
-  methods: {
-    refresh(pageNum) {
-      console.log(pageNum);
-      //       const res = await $axios
-      //   .get("http://localhost:8000/api/v1/image/?page=1")
-      //   .catch((err) => {
-      //     return err.response;
-      //   });
-    },
   },
 };
 </script>
