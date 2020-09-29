@@ -56,10 +56,8 @@ const getImageRecords = async (
   url: string
 ): Promise<AxiosResponse<ImageApiResponse> | AxiosErrorStatus> => {
   console.log("url:", url);
-  let res
-  try {
-    res = await axios.get(url)
-  } catch (err) {
+
+  const res = await axios.get(url).catch(err => {
     console.log(err);
     if (!err.response) {
       // レスポンスすら受け取れない場合。ステータスコードは定義されていない
