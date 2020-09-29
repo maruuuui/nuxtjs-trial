@@ -1,9 +1,8 @@
 <template>
   <div>
-    <h1>Images images</h1>
+    <h1>Images</h1>
     {{ totalRecords }}件
-    <button @click="refresh(nextPageNumber)">{{ nextPageNumber }}</button>
-    <!-- <n-link :to="`/images/?page=${nextPageNumber}`">次</n-link> -->
+    <n-link :to="{ path: `/images/?page=${nextPageNumber}` }">次</n-link>
 
     <v-simple-table>
       <thead>
@@ -18,12 +17,14 @@
             <v-img
               :src="imageData.image"
               contain
-              :max-width="0.2*window_width"
-              :max-height="0.2*window_height"
+              :max-width="0.2 * window_width"
+              :max-height="0.2 * window_height"
             />
           </td>
           <td>
-            <n-link :to="`/images/${imageData.id}`">{{ imageData.image_name }}</n-link>
+            <n-link :to="`/images/${imageData.id}`">{{
+              imageData.image_name
+            }}</n-link>
           </td>
         </tr>
       </tbody>
@@ -35,13 +36,21 @@
 const baseUrl = "http://localhost:8000/api/v1/image/";
 
 export default {
-  async asyncData({ error, app }) {
+  // クエリパラメータの監視設定
+  // パスが変わらずクエリパラメータだけが変わった際にも再描画を行わせる
+  watchQuery: ["page"],
+  //描画処理
+  async asyncData({ error, app, route }) {
+    // ?page=XX のXXの値を取得
+    const nowPage = route.query.page ? route.query.page : 1;
+    // console.log(nowPage);
     // appの中の$axiosを使用
-    app.$myInjectedFunction("test");
-    const res = await app.$axios.get(`${baseUrl}?page=1`).catch((err) => {
-      console.log(err);
-      return err.response;
-    });
+    const res = await app.$axios
+      .get(`${baseUrl}?page=${nowPage}`)
+      .catch((err) => {
+        console.log(err);
+        return err.response;
+      });
     console.log(res);
 
     if (res.status !== 200) {
@@ -52,10 +61,12 @@ export default {
       return;
     }
 
-    const totalRecords = res.data.count;
-    const nextPageUrl = res.data.next;
+    const totalRecords = res.data.count; // 総レコード数
+    const nextPageUrl = res.data.next; // 次のページのレコードを取得するためのURL
     console.log(nextPageUrl);
-    const pageQueryStringIndex = nextPageUrl.indexOf("?page=");
+    // 次のレコードが何ページ目かを取得
+    const pageQueryStringIndex =
+      nextPageUrl !== null ? nextPageUrl.indexOf("?page=") : -1;
     const nextPageNumber =
       pageQueryStringIndex === -1
         ? undefined
@@ -77,16 +88,6 @@ export default {
 
   head: {
     title: "Images page",
-  },
-  methods: {
-    refresh(pageNum) {
-      console.log(pageNum);
-      //       const res = await $axios
-      //   .get("http://localhost:8000/api/v1/image/?page=1")
-      //   .catch((err) => {
-      //     return err.response;
-      //   });
-    },
   },
 };
 </script>
