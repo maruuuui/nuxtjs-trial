@@ -51,16 +51,30 @@
 </template>
 
 <script>
+// TODO:baseURLをどこかで設定してそれを読み込むよう変更
+const baseUrl = "http://localhost:8000/api/v1/image/";
+
 export default {
   mounted() {
     console.log(this.$route.params.id);
   },
-  async asyncData({ app: { $axios }, params }) {
-    const data = await $axios.get(
-      `http://localhost:8000/api/v1/image/${params.id}`
-    ); // appの中の$axiosを使用
-    console.log(data);
-    return { imageData: data.data };
+  async asyncData({ error, app, params }) {
+    const recordId = params.id;
+    const url = `${baseUrl}${recordId}}`;
+
+    const res = await app.$getImageRecord(url);
+    if (!("data" in res)) {
+      // エラーページの表示;
+      console.log(res);
+      const statusCode = res.status;
+      const message = "message" in res ? res.message : "";
+      error({ statusCode, message });
+      return;
+    } else {
+      const imageRecord = res.data;
+      console.log(imageRecord);
+      return { imageData: imageRecord };
+    }
   },
 
   head: {
