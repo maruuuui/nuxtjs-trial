@@ -44,38 +44,37 @@ export default {
     // ?page=XX のXXの値を取得
     const nowPage = route.query.page ? route.query.page : 1;
     // console.log(nowPage);
-    // appの中の$axiosを使用
-    const res = await app.$axios
-      .get(`${baseUrl}?page=${nowPage}`)
-      .catch((err) => {
-        console.log(err);
-        return err.response;
-      });
-    console.log(res);
+    const url = `${baseUrl}?page=${nowPage}`;
+    const res = await app.$getImageRecords(url);
 
-    if (res.status !== 200) {
-      const statusCode = "status" in res ? res.status : 500;
-
-      error({ statusCode: statusCode });
-
+    if (!("data" in res)) {
+      // エラーページの表示;
+      console.log(res);
+      const statusCode = res.status;
+      const message = "message" in res ? res.message : "";
+      error({ statusCode, message });
       return;
+    } else {
+      const totalRecords = res.data.count; // 総レコード数
+      const nextPageUrl = res.data.next; // 次のページのレコードを取得するためのURL
+      console.log(nextPageUrl);
+      // 次のレコード取得用URLがAPIから取得できたらページ数
+      if (nextPageUrl === null) {
+        // 次のレコード取得用URLがnull => 現在位置が最終ページ
+        return {
+          images: res.data.results,
+          totalRecords,
+          nextPageNumber: undefined,
+        };
+      }
+      const pageQueryStringIndex = nextPageUrl.indexOf("?page=");
+      const nextPageNumber = nextPageUrl.slice(pageQueryStringIndex + 6);
+      return {
+        images: res.data.results,
+        totalRecords,
+        nextPageNumber,
+      };
     }
-
-    const totalRecords = res.data.count; // 総レコード数
-    const nextPageUrl = res.data.next; // 次のページのレコードを取得するためのURL
-    console.log(nextPageUrl);
-    // 次のレコードが何ページ目かを取得
-    const pageQueryStringIndex =
-      nextPageUrl !== null ? nextPageUrl.indexOf("?page=") : -1;
-    const nextPageNumber =
-      pageQueryStringIndex === -1
-        ? undefined
-        : nextPageUrl.slice(pageQueryStringIndex + 6);
-    return {
-      images: res.data.results,
-      totalRecords,
-      nextPageNumber,
-    };
   },
   computed: {
     window_width() {
