@@ -1,8 +1,7 @@
 <template>
   <div>
     <h1>Images</h1>
-    {{ totalRecords }}件
-    <n-link :to="{ path: `/images/?page=${nextPageNumber}` }">次</n-link>
+    <h2>保存された画像：{{ totalRecords }}件</h2>
 
     <v-simple-table>
       <thead>
@@ -29,6 +28,41 @@
         </tr>
       </tbody>
     </v-simple-table>
+    <div class="align-center">
+      <!-- 前ページへのリンクボタン ここから -->
+      <p
+        :to="{ path: `/images/?page=${prevPageNumber}` }"
+        class="button--disabled"
+        v-if="prevPageNumber === undefined"
+      >
+        &lt;
+      </p>
+      <n-link
+        :to="{ path: `/images/?page=${prevPageNumber}` }"
+        class="button--green"
+        v-else
+        >&lt;</n-link
+      >
+      <!-- 前ページへのリンクボタン ここまで -->
+
+      {{ nowPageNumber }}ページ目
+
+      <!-- 次ページへのリンクボタン ここから -->
+      <p
+        :to="{ path: `/images/?page=${nextPageNumber}` }"
+        class="button--disabled"
+        v-if="nextPageNumber === undefined"
+      >
+        &gt;
+      </p>
+      <n-link
+        :to="{ path: `/images/?page=${nextPageNumber}` }"
+        class="button--green"
+        v-else
+        >&gt;</n-link
+      >
+      <!-- 次ページへのリンクボタン ここまで -->
+    </div>
   </div>
 </template>
 
@@ -42,9 +76,10 @@ export default {
   //描画処理
   async asyncData({ error, app, route }) {
     // ?page=XX のXXの値を取得
-    const nowPage = route.query.page ? route.query.page : 1;
-    // console.log(nowPage);
-    const url = `${baseUrl}?page=${nowPage}`;
+    const nowPageNumber = route.query.page ? route.query.page : 1;
+    const prevPageNumber = nowPageNumber == 1 ? undefined : nowPageNumber - 1;
+
+    const url = `${baseUrl}?page=${nowPageNumber}`;
     const res = await app.$getImageRecords(url);
 
     if (!("data" in res)) {
@@ -64,6 +99,8 @@ export default {
         return {
           images: res.data.results,
           totalRecords,
+          prevPageNumber,
+          nowPageNumber,
           nextPageNumber: undefined,
         };
       }
@@ -72,6 +109,8 @@ export default {
       return {
         images: res.data.results,
         totalRecords,
+        prevPageNumber,
+        nowPageNumber,
         nextPageNumber,
       };
     }
@@ -90,3 +129,12 @@ export default {
   },
 };
 </script>
+
+<style>
+/* 子要素を中央ぞろえにするCSS */
+.align-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+</style>

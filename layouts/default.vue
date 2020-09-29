@@ -24,11 +24,24 @@ h1 {
   color: green;
 }
 
+h2 {
+  color: green;
+}
+
 *,
 *::before,
 *::after {
   box-sizing: border-box;
   margin: 0;
+}
+
+.button--disabled {
+  display: inline-block;
+  border-radius: 4px;
+  border: 1px solid #b1b1b1;
+  background-color: #b1b1b1;
+  text-decoration: none;
+  padding: 10px 30px;
 }
 
 .button--green {
