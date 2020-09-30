@@ -1,6 +1,8 @@
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { Plugin } from "@nuxt/types";
 
+import { ImageRecord } from "~/models/ImageRecord";
+
 //プラグインの注入先のための型定義
 // https://typescript.nuxtjs.org/cookbook/plugins.html
 
@@ -54,15 +56,6 @@ type ImageRecordsApiResponse = {
 };
 
 type ImageRecordApiResponse = ImageRecord;
-
-type ImageRecord = {
-  created_at: string;
-  id: string;
-  image: string;
-  image_name: string;
-  memo: string;
-  updated_at: string;
-};
 
 const getImageRecords = async (
   url: string
