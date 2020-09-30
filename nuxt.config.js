@@ -69,9 +69,12 @@ export default {
    ** Build configuration
    ** See https://nuxtjs.org/api/configuration-build/
    */
-  build: {}
+  build: {},
   /*
-   ** lint configuration
-   ** See https://typescript.nuxtjs.org/ja/guide/lint.html#%E8%A8%AD%E5%AE%9A
+   ** env configuration
+   ** See https://ja.nuxtjs.org/api/configuration-env/
    */
+  env: {
+    NUXT_ENV_BASE_URL: "http://localhost:8000/api/v1/image/"
+  }
 };

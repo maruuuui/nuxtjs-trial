@@ -63,8 +63,8 @@
 </template>
 
 <script>
-// TODO:baseURLをどこかで設定してそれを読み込むよう変更
-const baseUrl = "http://localhost:8000/api/v1/image/";
+const baseUrl =
+  process.env.NUXT_ENV_BASE_URL || "http://localhost:8000/api/v1/image/";
 
 export default {
   // クエリパラメータの監視設定
